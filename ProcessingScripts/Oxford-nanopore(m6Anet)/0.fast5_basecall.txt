@@ -1,0 +1,26 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore=
+# Threads used for basecalling
+
+fast5_dir=
+# Fast5 file directory
+
+fastq_dir=
+# Fastq file directory
+
+## Parameter setting ends
+############################
+
+echo "Start basecalling for Nanopore sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "\nBasecall"
+echo 'guppy_basecaller --cpu_threads_per_call ${ncore} -c rna_r9.4.1_70bps_hac.cfg -i ${fast5_dir} -r -s ${fastq_dir} --fast5_out\n'
+guppy_basecaller --cpu_threads_per_call ${ncore} -c rna_r9.4.1_70bps_hac.cfg -i ${fast5_dir} -r -s ${fastq_dir} --fast5_out
+
+## If the fast5 files are in multi-reads, you need to convert multi-read FAST5 to single-read FAST5 using multi_to_single_fast5

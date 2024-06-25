@@ -1,0 +1,84 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore_nanopolish=
+# Threads used to run nanopolish event alignment
+
+ncore_minimap2=
+# Threads used to run minimap2 alignment
+
+ncore_m6Anet=
+# Threads used to run m6Anet
+
+fastq_dir=
+# Basecalled fastq file directory
+
+fast5_dir=
+# Single-read fast5 file directory
+
+output_dir=
+# Output directory
+
+ref_dir=
+
+transcript_file_index=
+# e.g., Homo_sapiens.GRCh38.cdna.all.mmi
+# The transcript reference file should be indexed first with:
+# 	minimap2 -d ref.mmi ref.fa
+
+transcript_file=
+# e.g., Homo_sapiens.GRCh38.cdna.all.fa
+
+## Parameter setting ends
+############################
+
+echo "Start running m6Anet for Nanopore sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+
+
+echo "\n1. Combine fastq file......"
+
+echo "1.1 Find all the basecalled fastq file and combine them into one fastq file
+find ${fastq_dir} -maxdepth 1 -name "*.fastq" | xargs cat > ${output_dir}/reads.fastq
+
+echo "1.2 Convert the fastq file into fasta file"
+seqtk seq -A ${output_dir}/*.fastq > ${output_dir}/reads.fasta
+rm ${output_dir}/*.fastq
+
+
+
+echo "\n2. Minimap2 alignment......"
+
+echo "2.1 Minimap2 alignment"
+minimap2 -ax map-ont -uf -t ${ncore_minimap2} --secondary=no ${ref_dir}/${transcript_file_index} ${output_dir}/reads.fasta > ${output_dir}/reads.sam 2>> ${output_dir}/sam.log
+
+echo "2.2 Convert sam file to bam file"
+samtools view -Sb ${output_dir}/reads.sam | samtools sort -o ${output_dir}/reads.bam - &>> ${output_dir}/bam.log
+
+echo "2.3 Index bam file"
+samtools index ${output_dir}/reads.bam &>> ${output_dir}/bam.log
+rm bam.log reads.sam sam.log reads.fastq
+
+
+
+echo "\n3. Nanopolish event alignment......"
+
+echo "3.1 Nanopolish index"
+nanopolish index -d ${fast5_dir} ${output_dir}/reads.fasta -s ${output_dir}/sequencing_summary.txt
+
+echo "3.2 Nanopolish event alignment"
+nanopolish eventalign --reads ${output_dir}/reads.fasta --bam ${output_dir}/reads.bam --genome ${ref_dir}/${transcript_file} --signal-index --scale-events  --summary ${output_dir}/each_read_alignment_summary.txt --threads${ncore_nanopolish} > ${output_dir}/eventalign.txt
+
+
+
+echo "\n4. m6Anet inference......"
+
+echo "4.1 Data preparation"
+m6anet dataprep --eventalign .${output_dir}/eventalign.txt --out_dir ${output_dir}/dataprep --n_processes ${ncore_m6Anet}
+
+echo "4.2 m6Anet inference"
+m6anet inference --input_dir ${output_dir}/dataprep --out_dir ${output_dir}/prediction  --n_processes ${ncore_m6Anet} --num_iterations 1000
