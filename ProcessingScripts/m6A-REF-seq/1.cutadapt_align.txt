@@ -1,0 +1,61 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore=10
+
+srr=
+# SRR id
+# e.g., SRR8450805
+
+fastq_dir=
+# Fastq file directory
+# e.g., path/to/SRR8450805
+
+cutout_dir=
+# Output directory for clean reads
+
+align_dir=
+# Output directory for alignment results
+
+hisat2_index=
+# hisat2 index directory and prefix
+# e.g., path/to/grch38/genome
+
+## Parameter setting ends
+############################
+
+echo "Start cutting adaptors and hisat2 alignments for m6A-REF-seq sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+## Cutadapt
+echo "\nCutadapt\n"
+if [ ! -d "${cutout_dir}" ];then mkdir -p "${cutout_dir}" ;fi
+cutadapt -j $ncore \
+        -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG \
+        -A GATCGTCGGACTGTAGAACTCTGAACGTGTAGATCTCGGTGGTCGCCGTATCATT \
+        -O 3 -m 15 -o ${cutout_dir}/${srr}_1.cutout.fq.gz -p ${cutout_dir}/${srr}_2.cutout.fq.gz \
+        ${fastq_dir}/${srr}_1.fastq ${fastq_dir}/${srr}_2.fastq
+
+
+
+## Hisat2 alignment
+echo -e "\nHisat2 alignment\n"
+if [ ! -d "${align_dir}" ];then mkdir -p "${align_dir}" ;fi
+
+hisat2 -p $ncore -x ${hisat2_index} -1 ${cutout_dir}/${srr}_1.cutout.fq.gz -2 ${cutout_dir}/${srr}_2.cutout.fq.gz -S ${align_dir}/file.sam
+
+samtools view -bS ${align_dir}/file.sam | samtools sort -o ${align_dir}/file.sort.bam -
+samtools view -b -F 256 -q 20 ${align_dir}/file.sort.bam > ${align_dir}/file.q20.mapped.sort.bam
+samtools index ${align_dir}/file.q20.mapped.sort.bam
+rm ${align_dir}/file.sam
+
+wait
+
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins

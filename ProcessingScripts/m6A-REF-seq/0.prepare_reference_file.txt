@@ -1,0 +1,47 @@
+#!/bin/bash
+
+############################
+## Parameter setting starts
+
+tool_dir=
+# e.g., path/to/m6A-REF-seq/RNAMod/m6A-REF-seq_v0.2
+
+ref_dir=
+
+genome_file=
+# Fasta file
+# e.g., Homo_sapiens.GRCh38.dna.primary_assembly.fa
+
+gft_file=
+# e.g., Homo_sapiens.GRCh38.110.gtf
+
+genome_prefix=
+# e.g., GRCh38
+
+## Parameter setting ends
+############################
+
+echo "Start preparing reference files for m6A-REF-seq sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+
+
+echo "Turn the assemble file to two-line mode"
+echo '${tool_dir}/prepare_ref_files/delete.pl ${ref_dir}/${genome_file} > ${ref_dir}/${genome_prefix}_two_line_mode.fa\n'
+perl ${tool_dir}/prepare_ref_files/delete.pl ${ref_dir}/${genome_file} > ${ref_dir}/${genome_prefix}_two_line_mode.fa
+
+
+echo "Scan and get location for each ACA motif in exon regions"
+echo '${tool_dir}/prepare_ref_files/get_ref_motif.pl -g ${ref_dir}/${gft_file} -f ${ref_dir}/${genome_prefix}_two_line_mode.fa > ${ref_dir}/${genome_prefix}_motif_exon\n"
+perl ${tool_dir}/prepare_ref_files/get_ref_motif.pl -g ${ref_dir}/${gft_file} -f ${ref_dir}/${genome_prefix}_two_line_mode.fa > ${ref_dir}/${genome_prefix}_motif_exon
+
+
+echo "Get information of junction reads for each transcript"
+echo '${tool_dir}/prepare_ref_files/get_junction_sites_trans.pl ${ref_dir}/${gft_file} > ${ref_dir}/${genome_prefix}_junction_file\n"
+perl ${tool_dir}/prepare_ref_files/get_junction_sites_trans.pl ${ref_dir}/${gft_file} > ${ref_dir}/${genome_prefix}_junction_file
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins

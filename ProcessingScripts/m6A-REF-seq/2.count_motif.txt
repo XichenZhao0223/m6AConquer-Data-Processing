@@ -1,0 +1,53 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+tool_dir=
+# e.g., path/to/m6A-REF-seq/RNAMod/m6A-REF-seq_v0.2
+
+align_dir=
+# Output directory for alignment results
+
+count_dir=
+# Output directory for counts
+
+ref_dir=
+
+gtf_file=
+# e.g., Homo_sapiens.GRCh38.110.gtf
+
+genome_prefix=
+# e.g., GRCh38
+
+## Parameter setting ends
+############################
+
+echo "Start counting motifs for m6A-REF-seq ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "\nCalculated the number of digested/undigested reads for each ACA motif\n"
+if [ ! -d "${count_dir}" ];then mkdir -p "${count_dir}" ;fi
+
+echo "\nConvert bam file to temp bed file"
+echo 'samtools view ${align_dir}/file.q20.mapped.sort.bam | perl ${tool_dir}/calculate_ACA/sam2bed_with_junction.pl > ${count_dir}/file.tmp\n'
+samtools view ${align_dir}/file.q20.mapped.sort.bam | perl ${tool_dir}/calculate_ACA/sam2bed_with_junction.pl > ${count_dir}/file.tmp
+
+echo "\nGenerate bed file. Information of junction sites from gtf file was combined."
+echo 'perl ${tool_dir}/calculate_ACA/get_bed.pl -g ${ref_dir}/${gtf_file} -j ${ref_dir}/${genome_prefix}_junction_file -t ${count_dir}/file.tmp > ${count_dir}/file.bed\n'
+perl ${tool_dir}/calculate_ACA/get_bed.pl -g ${ref_dir}/${gtf_file} -j ${ref_dir}/${genome_prefix}_junction_file -t ${count_dir}/file.tmp > ${count_dir}/file.bed
+
+echo "\nLocate and count ACA motif on the fragments"
+echo 'perl ${tool_dir}/calculate_ACA/get_site_from_bed_with_ref.pl -f ${ref_dir}/${genome_prefix}_two_line_mode.fa -m ${ref_dir}/${genome_prefix}_motif_exon -b ${count_dir}/file.bed > ${count_dir}/file.digest\n'
+perl ${tool_dir}/calculate_ACA/get_site_from_bed_with_ref.pl -f ${ref_dir}/${genome_prefix}_two_line_mode.fa -m ${ref_dir}/${genome_prefix}_motif_exon -b ${count_dir}/file.bed > ${count_dir}/file.digest
+
+echo "\nCount digested/undigested numbers"
+echo 'perl ${tool_dir}/calculate_ACA/cal_num_max.pl -t ${count_dir}/file.tmp -d ${count_dir}/file.digest -m ${ref_dir}/${genome_prefix}_motif_exon > ${count_dir}/file.num
+perl ${tool_dir}/calculate_ACA/cal_num_max.pl -t ${count_dir}/file.tmp -d ${count_dir}/file.digest -m ${ref_dir}/${genome_prefix}_motif_exon > ${count_dir}/file.num
+
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins
