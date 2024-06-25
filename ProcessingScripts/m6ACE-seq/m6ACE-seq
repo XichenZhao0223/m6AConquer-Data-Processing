@@ -1,0 +1,58 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore_fastp=
+
+ncore_star=
+
+srr=
+# SRR id
+# e.g., SRR8380776
+
+fastq_dir=
+# Fastq file directory
+# e.g., path/to/SRR8380776
+
+cutout_dir=
+# Output directory for clean reads
+
+align_dir=
+# Output directory for alignment results
+
+star_index=
+# STAR index directory
+
+ref_dir=
+
+gtf_file=
+# e.g., gencode.v45.annotation.gtf
+
+## Parameter setting ends
+############################
+
+echo "Start trimming for m6ACE-seq sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+if [ ! -d "${cutout_dir}" ];then mkdir -p "${cutout_dir}" ;fi
+
+echo "\nfastp\n"
+echo "\nfastp -i ${fastq_dir}/${srr}_1.fastq -I ${fastq_dir}/${srr}_2.fastq -o ${cutout_dir}/${srr}_clean_1.fastq -O ${cutout_dir}/${srr}_clean_2.fastq -g -U --umi_loc=read1 --umi_len=8 -D -w ${ncore_fastp}\n"
+fastp \
+	-i ${fastq_dir}/${srr}_1.fastq -I ${fastq_dir}/${srr}_2.fastq \
+	-o ${cutout_dir}/${srr}_clean_1.fastq -O ${cutout_dir}/${srr}_clean_2.fastq \
+	-g -q 20 -U --umi_loc=read1 --umi_len=8 -D -w ${ncore_fastp}
+
+
+echo "\nSTAR --runThreadN ${ncore_star} --genomeDir ${star_index} --readFilesIn ${cutout_dir}/${srr}_clean_1.fastq ${cutout_dir}/${srr}_clean_2.fastq --sjdbGTFfile ${ref_dir}/${gtf_file} --outFileNamePrefix ${align_dir}/\n"
+STAR --runThreadN ${ncore_star} --genomeDir ${star_index} --readFilesIn ${cutout_dir}/${srr}_clean_1.fastq ${cutout_dir}/${srr}_clean_2.fastq --sjdbGTFfile ${ref_dir}/${gtf_file} --outFileNamePrefix ${align_dir}/
+
+echo "\nsamtools view -F 3852 -b ${align_dir}/Aligned.out.sam -o ${align_dir}/reads.bam\n"
+samtools view -F 3852 -b ${align_dir}/Aligned.out.sam -o ${align_dir}/reads.bam
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins
