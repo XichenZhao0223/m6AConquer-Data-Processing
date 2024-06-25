@@ -1,0 +1,49 @@
+#!/bin/bash
+
+############################
+## Parameter setting
+
+reference_dir=
+# Path to your reference directory
+
+gft_file=
+# e.g., Homo_sapiens.GRCh38.110.gtf
+
+genome_file=
+# e.g., Homo_sapiens.GRCh38.dna.primary_assembly.fa
+# should be indexed
+# samtools faidx genome.fa
+
+hisat3n_tool_dir=
+# e.g., path/to/Hisat3n/hisat-3n
+
+rrna_index_name=
+# e.g., rRNA_tran
+
+genome_index_name=
+# e.g., GRCh38_tran
+
+############################
+
+echo "Start rna index building......"
+
+# Extract rRNA Sequences from the Genome
+awk '$3=="gene" && /gene_biotype "rRNA"/' $reference_dir/$gft_file > $reference_dir/rna.gtf
+# Convert the rRNA.gtf to a BED format
+awk '{print $1"\t"$4-1"\t"$5"\t"$9}' $reference_dir/rna.gtf > $reference_dir/rRNA.bed
+# Use bedtools to extract sequences
+bedtools getfasta -fi $reference_dir/$genome_file -bed $reference_dir/rRNA.bed -fo $reference_dir/rRNA.fa
+# Hisat3n index building for rrna 
+hisat-3n-build --base-change A,G $reference_dir/rRNA.fa $reference_dir/$rrna_index_name
+
+echo "Finish rna index building......"
+
+echo "Start genome index building......"
+
+# Generate splice site index and exon index
+$hisat3n_tool_dir/hisat2_extract_splice_sites.py $reference_dir/$gft_file > $reference_dir/genome.ss
+$hisat3n_tool_dir/hisat2_extract_exons.py $reference_dir/$gft_file > $reference_dir/genome.exon
+# Hisat3n index building for genome
+hisat-3n-build --base-change A,G --repeat-index --ss $reference_dir/genome.ss --exon $reference_dir/genome.exon $reference_dir/$genome_file $reference_dir/$genome_index_name
+
+echo "Finish genome index building......"
