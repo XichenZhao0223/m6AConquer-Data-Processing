@@ -1,0 +1,36 @@
+#!/bin/bash
+
+############################
+## Parameter setting starts
+
+srr=$srr
+# SRR id
+# e.g., SRR21356198
+
+fastq_file=
+# Fastq file directory
+# e.g., path/to/SRR21356198.fastq
+
+clean_output=
+# Output directory for clean reads
+
+## Parameter setting ends
+############################
+
+echo "Start trimming and depulication ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "\nTrimming\n"
+if [ ! -d "${clean_output}" ];then mkdir -p "${clean_output}" ;fi 
+echo "\ntrim_galore -q 20 --stringency 1 -e 0.3 --length 35 --dont_gzip -o ${clean_output} ${fastq_file}\n"
+trim_galore -q 20 --stringency 1 -e 0.3 --length 35 --dont_gzip -o ${clean_output} ${fastq_file}
+
+echo "\nfastp\n"
+echo "\nfastp -i ${clean_output}/$srr_trimmed.fq -o ${clean_output}/$srr_clean.fastq -Q -L -A -G -U --umi_loc=read1 --umi_len=10 -D -w 20\n"
+fastp -i ${clean_output}/$srr_trimmed.fq -o ${clean_output}/$srr_clean.fastq -Q -L -A -G -U --umi_loc=read1 --umi_len=10 -D -w 20
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins

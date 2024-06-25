@@ -1,0 +1,63 @@
+#!/bin/bash
+
+############################
+## Parameter setting starts
+
+clean_output=
+# Output directory for clean reads
+
+tool_dir=
+# e.g., path/to/GLORI-tools
+
+ref_dir=
+# reference directory
+
+gft_file=
+# e.g., GCF_000001405.39_GRCh38.p13_genomic.gtf
+
+genome_file=
+# Fasta file
+# Use the genome sequences with only standard chromosomes
+# Remember to correct the command line for building indexes in the GLORI-tools script build_genome_index.py: -runThreadN -> --runThreadN
+
+genome_prefix=
+# Prefix used to build star genome index
+# e.g., hg38
+
+output_prefix=
+# Prefix used in GLORI results
+output_file=
+# Ouptut directory for GLORI results
+
+ncores=
+
+## Parameter setting ends
+############################
+
+echo "Start running GLORI with Combined&Reversed mode ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "\npython ${tool_dir}/run_GLORI.py -i ${tool_dir} -q ${clean_output} -T 20 -f ${ref_dir}/${genome_prefix}.AG_conversion.fa -f2 ${ref_dir}/${genome_file} -rvs ${ref_dir}/${genome_prefix}.rvsCom.fa -Tf ${ref_dir}/${transcript_file}.AG_conversion.fa -a ${ref_dir}/${gft_file}_change2Ens.tbl2 -b ${ref_dir}/${gft_file}_change2Ens.tbl2.noredundance.base -pre SRR21356198 -o ${output_file} --combine --rvs_fac -c 1 -C 0 -r 0 -p 1.1 -adp 1.1 -s 0\n"
+
+python ${tool_dir}/run_GLORI.py \
+	-i ${tool_dir} \
+	-q ${clean_output} \
+	-T ${ncores} \
+	-f ${ref_dir}/${genome_prefix}.AG_conversion.fa \
+	-f2 ${ref_dir}/${genome_file} \
+	-rvs ${ref_dir}/${genome_prefix}.rvsCom.fa \
+	-Tf ${ref_dir}/${transcript_file}.AG_conversion.fa \
+	-a ${ref_dir}/${gft_file}_change2Ens.tbl2 \
+	-b ${ref_dir}/${gft_file}_change2Ens.tbl2.noredundance.base \
+	-pre ${output_prefix} \
+	-o ${output_file} \
+	--combine \
+	--rvs_fac \
+	-c 1 -C 0 -r 0 -p 1.1 -adp 1.1 -s 0 
+
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins

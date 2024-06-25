@@ -1,0 +1,78 @@
+#!/bin/bash
+
+############################
+## Parameter setting starts
+
+tool_dir=
+# e.g., path/to/GLORI-tools
+
+ref_dir=
+# reference directory
+
+gft_file=
+# e.g., GCF_000001405.39_GRCh38.p13_genomic.gtf
+
+report_file=
+# e.g., GCF_000001405.39_GRCh38.p13_assembly_report.txt
+
+transcript_file=
+# e.g., GCF_000001405.39_GRCh38.p13_rna.fna
+
+genome_file=
+# Use the genome sequences with only standard chromosomes
+# Remember to correct the command line for building indexes in the GLORI-tools script build_genome_index.py: -runThreadN -> --runThreadN
+
+genome_prefix=
+# Prefix used to build genome index
+# e.g., hg38
+
+change_refer_script=
+# a modified python script of build_genome_index.py to perform base change only
+# Useful when memory is limited
+# e.g., path/to/change_reference.py
+
+## Parameter setting ends
+############################
+
+
+echo "Start building index for ${genome_prefix} ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "Unify chromosome naming......"
+## Reference process
+# Unify chromosome naming
+python $tool_dir/get_anno/change_UCSCgtf.py -i $ref_dir/$gft_file -j $ref_dir/$report_file -o ${ref_dir}/${gft_file}_change2Ens 
+python $tool_dir/get_anno/gtf2anno.py -i ${ref_dir}/${gft_file}_change2Ens -o ${ref_dir}/${gft_file}_change2Ens.tbl 
+awk '$3!~/_/&&$3!="na"' ${ref_dir}/${gft_file}_change2Ens.tbl | sed '/unknown_transcript/d'  > ${ref_dir}/${gft_file}_change2Ens.tbl2
+
+echo "Build transcriptome index......"
+# Build transcriptome index
+python $tool_dir/pipelines/build_transcriptome_index.py -f $ref_dir/$transcript_file -o $ref_dir -pre $transcript_file
+# You will get: prefix.AG_conversion.fa and the corresponding index from bowtie in your reference directory
+
+echo "Build genome index......"
+# Build genome index
+python $tool_dir/pipelines/build_genome_index.py -f $ref_dir/$genome_file -p 20 -o $ref_dir/ -pre $genome_prefix
+# You will get: prefix.rvsCom.fa, prefix.AG_conversion.fa and star index directory in your reference directory
+
+########## If memory is limited, use the codes below instead #############################
+#
+# python $change_refer_script -f $ref_dir/$genome_file -p 20 -o $ref_dir/ -pre $genome_prefix
+#
+# STAR --runMode genomeGenerate --runThreadN 20 --genomeDir $ref_dir/${genome_prefix}.AG_conversion --genomeFastaFiles $ref_dir/${genome_prefix}.AG_conversion.fa --genomeSAindexNbases 12 --genomeSAsparseD 2
+# STAR --runMode genomeGenerate --runThreadN 20 --genomeDir $ref_dir/${genome_prefix}.rvsCom --genomeFastaFiles $ref_dir/${genome_prefix}.rvsCom.fa --genomeSAindexNbases 12 --genomeSAsparseD 2
+#
+########## If memory is limited, use the codes above instead #############################
+
+echo "Get base annotation......"
+# Get base annotation
+python $tool_dir/get_anno/anno_to_base.py -i ${ref_dir}/${gft_file}_change2Ens.tbl2 -o ${ref_dir}/${gft_file}_change2Ens.tbl2.baseanno 
+python $tool_dir/get_anno/gtf2genelist.py -i ${ref_dir}/${gft_file}_change2Ens -f $ref_dir/$transcript_file -o ${ref_dir}/${gft_file}_change2Ens.genelist > ${ref_dir}/output2
+awk '$6!~/_/&&$6!="na"' ${ref_dir}/${gft_file}_change2Ens.genelist > ${ref_dir}/${gft_file}_change2Ens.genelist2
+python $tool_dir/get_anno/anno_to_base_remove_redundance_v1.0.py -i ${ref_dir}/${gft_file}_change2Ens.tbl2.baseanno -o ${ref_dir}/${gft_file}_change2Ens.tbl2.noredundance.base -g ${ref_dir}/${gft_file}_change2Ens.genelist2
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins
