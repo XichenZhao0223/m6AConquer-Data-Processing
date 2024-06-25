@@ -1,0 +1,46 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore=
+
+srr=
+# SRR id
+# e.g., SRR13167131
+
+sample=
+# sample name
+# e.g., hek293.ribom.ftom.rep1
+
+fastq_dir=
+# Fastq file directory
+# e.g., path/to/SRR13167131
+
+cutout_dir=
+# Output directory for clean reads
+
+## Parameter setting ends
+############################
+
+echo "Start trimming for m6A-SAC-seq single-end sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "Start trimming for ${srr}"
+if [[ ! -d ${cutout_dir} ]];then mkdir -p ${cutout_dir};fi
+cd ${cutout_dir}
+cutadapt -j $ncore -e 0.1 -n 1 -O 1 -q 10 -m 32 -a AGATCGGAAGAGCACACGTCT -o ${sample}.adapter3trim.fastq.gz\
+        ${fastq_dir}/${srr}/${srr}.fastq > ${sample}.adapter3trim.log
+zcat ${sample}.adapter3trim.fastq.gz | fastx_collapser -Q33 -i - -o ${sample}.adapter3trim.collapse.fa
+cutadapt -j $ncore -e 0.1 -n 1 -O 1 -m 16 -u 5 -u -11 -o ${sample}.clean.fa ${sample}.adapter3trim.collapse.fa > ${sample}.barcoder5n3trim.log
+rm ${sample}.adapter3trim.fastq.gz
+rm ${sample}.adapter3trim.collapse.fa
+
+
+echo -e "\nAll done\n"
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins

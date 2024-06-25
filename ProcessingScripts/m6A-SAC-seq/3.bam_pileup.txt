@@ -1,0 +1,52 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+srr=
+# SRR id
+# e.g., SRR13167131
+
+sample=
+# sample name
+# e.g., hek293.ribom.ftom.rep1
+
+star_index_name=
+# star index name prefix
+# e.g., GRCh38
+
+align_dir=
+# Output directory for alignment results
+
+pileup_dir=
+# Output directory for pileup results
+
+ref_dir=
+
+fasta_file=
+# e.g., Homo_sapiens.GRCh38.dna.primary_assembly.fa
+
+candidate_site=
+# List of candidiate site locatations
+# e.g., path/to/total_gr_NCBI.txt (This is the candidiate sites used in this project)
+
+## Parameter setting ends
+############################
+
+echo "Start piling up for DART-seq sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "Start piling up for ${srr}"
+
+## pileup start
+if [[ ! -d ${pileup_dir} ]];then mkdir -p ${pileup_dir};fi
+
+samtools mpileup ${align_dir}/${sample}.${star_index_name}.align.sorted.bam -A -B -d 0 -f ${ref_dir}/${fasta_file} -l ${candidate_site} -Q 0 --ff 0 -x -o ${pileup_dir}/${srr}.pileup
+
+echo -e "Pileup done\n"
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins
