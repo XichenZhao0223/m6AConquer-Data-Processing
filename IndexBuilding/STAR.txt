@@ -1,0 +1,27 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore=
+# Threads used for building STAR index
+
+star_index=
+# Output file directory for STAR index
+
+fasta_dir=
+# Fasta file directory
+
+## Parameter setting ends
+############################
+
+echo "Start building STAR index ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+STAR --runMode genomeGenerate --runThreadN ${ncore} --genomeDir ${star_index} --genomeFastaFiles ${fasta_dir} --genomeSAindexNbases 12 --genomeSAsparseD 2
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+############################
+## Parameter setting starts
+
+reference_dir=
+# Path to your reference directory
+
+gft_file=
+# e.g., Homo_sapiens.GRCh38.110.gtf
+
+genome_file=
+# e.g., Homo_sapiens.GRCh38.dna.primary_assembly.fa
+# should be indexed
+# samtools faidx genome.fa
+
+hisat3n_tool_dir=
+# e.g., path/to/Hisat3n/hisat-3n
+
+genome_index_name=
+# e.g., GRCh38_tran
+
+## Parameter setting ends
+############################
+
+echo "\nStart building HISAT3N (A-to-G) index ......\n"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "\nStart genome index building......"
+
+echo "Generate splice site index and exon index"
+$hisat3n_tool_dir/hisat2_extract_splice_sites.py $reference_dir/$gft_file > $reference_dir/genome.ss
+$hisat3n_tool_dir/hisat2_extract_exons.py $reference_dir/$gft_file > $reference_dir/genome.exon
+echo "Hisat3n index building for genome"
+hisat-3n-build --base-change A,G --repeat-index --ss $reference_dir/genome.ss --exon $reference_dir/genome.exon $reference_dir/$genome_file $reference_dir/$genome_index_name
+
+echo "Finish genome index building......\n"
