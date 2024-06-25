@@ -1,0 +1,74 @@
+!/bin/bash
+
+############################
+## Parameter setting starts
+
+ncore=
+
+tool_dir=
+# e.g., path/to/m6A-REF-seq/RNAMod/mazter_mine
+
+srr=
+# SRR id
+# e.g., SRR8903046
+
+fastq_dir=
+# Fastq file directory
+# e.g., path/to/SRR8903046
+
+cutout_dir=
+# Output directory for clean reads
+
+align_dir=
+# Output directory for alignment results
+
+star_index=
+# STAR index directory
+
+ref_dir=
+
+gtf_file=
+# e.g., Homo_sapiens.GRCh38.110.gtf
+
+bed_file=
+# Transformed from GTF file
+# e.g., Homo_sapiens.GRCh38.110.bed
+
+fasta_file=
+# e.g., Homo_sapiens.GRCh38.dna.primary_assembly.fa
+
+## Parameter setting ends
+############################
+
+echo "Start analysis for MAZTER-seq sequencing data ......"
+echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
+start=$(date +%s)
+
+echo "\nQuality control"
+echo 'trim_galore --paired ${fastq_dir}/${srr}_1.fastq ${fastq_dir}/${srr}_2.fastq -o ${cutout_dir}\n'
+trim_galore --paired ${fastq_dir}/${srr}_1.fastq ${fastq_dir}/${srr}_2.fastq -o ${cutout_dir}
+
+echo "\nGenome alignment"
+echo 'STAR --runThreadN 20 --genomeDir ${star_index} --readFilesIn ${cutout_dir}/${srr}_1_val_1.fq ${cutout_dir}/${srr}_2_val_2.fq --outFileNamePrefix ${align_dir}/ --sjdbGTFfile ${ref_dir}/${gtf_file}\n'
+STAR \
+	--runThreadN ${ncore} \
+	--genomeDir ${star_index} \
+	--readFilesIn ${cutout_dir}/${srr}_1_val_1.fq ${cutout_dir}/${srr}_2_val_2.fq \
+	--outFileNamePrefix ${align_dir}/ \
+	--sjdbGTFfile ${ref_dir}/${gtf_file}
+
+
+echo "\nConvert Bam file to SAM file and filter the aligned reads"
+echo 'samtools view -F 3852 -b ${align_dir}/Aligned.out.sam -o ${align_dir}/reads.bam\n'
+samtools view -F 3852 -b ${align_dir}/Aligned.out.sam -o ${align_dir}/reads.bam
+
+echo "\nRun Mazter mine tool"
+echo 'Rscript ${tool_dir}/bam2ReadEnds.R -i ${align_dir}/reads.bam -g ${ref_dir}/${bed_file}'
+Rscript ${tool_dir}/bam2ReadEnds.R -i ${align_dir}/reads.bam -g ${ref_dir}/${bed_file}
+echo 'Rscript ${tool_dir}/mazter_mine.R -i ${align_dir}/reads.Rdata -g ${ref_dir}/${bed_file} -f ${ref_dir}/${fasta_file}\n'
+Rscript ${tool_dir}/mazter_mine.R -i ${align_dir}/reads.Rdata -g ${ref_dir}/${bed_file} -f ${ref_dir}/${fasta_file}
+
+echo Ending Time is `date "+%Y-%m-%d %H:%M:%S"`
+end=$(date +%s)
+time=$(( ($end - $start) / 60 ))
+echo Used Time is $time mins
