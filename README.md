@@ -1,4 +1,4 @@
-# m6AConquer
+# m6AConquer: Data Processing
 
 This repository holds the scripts used to process the sequencing data in the m6AConquer database. The scripts are organized into two main directories:
 
@@ -7,14 +7,14 @@ This repository holds the scripts used to process the sequencing data in the m6A
 
 ## Table of Contents
 
-- [IndexBuilding](#indexbuilding-scripts)
+- [Index Building](#indexbuilding-scripts)
   - [Example: HISAT3N_A2G.txt](#hisat3n_a2gtxt)
-- [ProcessingScripts](#processing-scripts)
+- [Processing Scripts](#processing-scripts)
   - [Example: m6ACE-seq.txt](#m6ace-seqtxt)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
-## IndexBuilding
+## Index Building
 
 ### Example: HISAT3N_A2G.txt
 
@@ -71,7 +71,7 @@ hisat-3n-build --base-change A,G --repeat-index --ss $reference_dir/genome.ss --
 echo "Finish genome index building......\n"
 ```
 
-## ProcessingScripts
+## Processing Scripts
 
 ### Example: m6ACE-seq.txt
 
