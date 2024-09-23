@@ -2,7 +2,7 @@
 
 This repository holds the scripts used to process the sequencing data in the m6AConquer database. The scripts are organized into two main directories:
 
-1. **IndexBuilding**: Contains scripts used to build alignment indexes for Hisat-3N and SATR.
+1. **IndexBuilding**: Contains scripts used to build alignment indexes for Hisat-3N and STAR.
 2. **ProcessingScript**: Contains the actual scripts used in various sequencing data processing pipelines.
 
 ## Table of Contents
