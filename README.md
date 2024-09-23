@@ -3,12 +3,10 @@
 
 ## Table of Contents
  1. [Overview][1]
- 2. [Index Building][2]
-    [Example: HISAT3N_A2G.txt][3]
- 4. [Processing Scripts][4]
-    [Example: m6ACE-seq.txt][5]
- 6. [Usage][6]
- 7. [Contributing][7]
+ 2. [Index Building Example: HISAT3N_A2G.txt][2]
+ 3. [Processing Script Example: m6ACE-seq.txt][4]
+ 4. [Usage][6]
+ 5. [Contributing][7]
  
 ## 1. Overview
 This repository holds the scripts used to process the sequencing data in the m6AConquer database. The scripts are organized into two main directories:
@@ -18,27 +16,210 @@ This repository holds the scripts used to process the sequencing data in the m6A
 
 An overview table of the scipts included in the repository is:
 
-|  **Type**   | **Technique/Software**  | **File** |
-|  :----:  | :----:  | :----: | :----:|
-| Index Building  | HISAT3N | [HISAT3N_A2G.txt][8] |
-| Index Building  | HISAT3N | [HISAT3N_C2T.txt][9] |
-| Index Building | STAR | [STAR.txt][10] |
-| Processing Scripts | DART-seq |[Bulk-scDART-seq.txt][11]<br>[DART-seq.txt][12]|
-| Processing Scripts | eTAM-seq | [0.index_building.txt][13]<br>[1.trim_dedup.txt][14]<br>[2.map_pileup.txt][15]
-| Processing Scripts | GLORI | [0.index_building.txt][16]<br>[1.trim_dedup.txt][17]<br>[2.run_GLORI.txt][18]<br>[change_reference.py][19]
-| Processing Scripts | m6ACE-seq | [m6ACE-seq.txt][20]
-| Processing Scripts | m6A-REF-seq |[0.prepare_reference_file.txt][21]<br>[1.cutadapt_align.txt][22]<br>[2.count_motif.txt][23]
-| Processing Scripts | m6A-SAC-seq | [1.trim_dedup_paired.txt][24]<br>[1.trim_dedup_single.txt][25]<br>[2.star_align_paired.txt][26]<br>[2.star_align_single.txt][27]<br>[3.bam_pileup.txt][28]
-| Processing Scripts | MAZTER-seq | [MAZTER-seq.txt][29]|
-| Processing Scripts | Oxford-nanopore (m6Anet) | [0.fast5_basecall.txt][30]<br>[1.m6Anet.txt][31]
+<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:1184;mso-padding-alt:0cm 5.4pt 0cm 5.4pt">
+ <tbody><tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes">
+  <td valign="top" style="border:solid windowtext 1.0pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal" align="left" style="text-align:left"><b><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif">Type<o:p></o:p></span></b></p>
+  </td>
+  <td valign="top" style="border:solid windowtext 1.0pt;border-left:none;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal" align="left" style="text-align:left"><b><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif">Technique/Software<o:p></o:p></span></b></p>
+  </td>
+  <td valign="top" style="border:solid windowtext 1.0pt;border-left:none;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal" align="left" style="text-align:left"><b><span lang="EN-US" style="font-family:&quot;Arial&quot;,sans-serif">File<o:p></o:p></span></b></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:1">
+  <td rowspan="3" style="border:solid windowtext 1.0pt;border-top:none;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal" align="center" style="text-align:center"><span lang="EN-US">Index
+  Building</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">HISAT3N</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/IndexBuilding/HISAT3N_A2G.txt" target="_blank">HISAT3N_A2G.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:2">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">HISAT3N</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/IndexBuilding/HISAT3N_C2T.txt" target="_blank">HISAT3N_C2T.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:3">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">STAR</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/IndexBuilding/STAR.txt" target="_blank">STAR.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:4">
+  <td rowspan="8" style="border:solid windowtext 1.0pt;border-top:none;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal" align="center" style="text-align:center"><span lang="EN-US">Processing
+  Scripts</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">DART-seq</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/DART-seq/Bulk-scDART-seq.txt" target="_blank">Bulk-scDART-seq.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/DART-seq/DART-seq.txt" target="_blank">DART-seq.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:5">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">eTAM-seq</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/eTAM-seq/0.index_building.txt" target="_blank">0.index_building.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/eTAM-seq/1.trim_dedup.txt" target="_blank">1.trim_dedup.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/eTAM-seq/2.map_pileup.txt" target="_blank">2.map_pileup.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:6">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">GLORI</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/GLORI/0.index_building.txt" target="_blank">0.index_building.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/GLORI/1.trim_dedup.txt" target="_blank">1.trim_dedup.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/GLORI/2.run_GLORI.txt" target="_blank">2.run_GLORI.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/GLORI/change_reference.py" target="_blank">change_reference.py</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:7">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">m6ACE-seq</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6ACE-seq/m6ACE-seq.txt" target="_blank">m6ACE-seq.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:8">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">m6A-REF-seq</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-REF-seq/0.prepare_reference_file.txt" target="_blank">0.prepare_reference_file.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-REF-seq/1.cutadapt_align.txt" target="_blank">1.cutadapt_align.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-REF-seq/2.count_motif.txt" target="_blank">2.count_motif.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:9">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">m6A-SAC-seq</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-SAC-seq/1.trim_dedup_paired.txt" target="_blank">1.trim_dedup_paired.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-SAC-seq/1.trim_dedup_single.txt" target="_blank">1.trim_dedup_single.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-SAC-seq/2.star_align_paired.txt" target="_blank">2.star_align_paired.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-SAC-seq/2.star_align_single.txt" target="_blank">2.star_align_single.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/m6A-SAC-seq/3.bam_pileup.txt" target="_blank">3.bam_pileup.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:10">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">MAZTER-seq</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/MAZTER-seq/MAZTER-seq.txt" target="_blank">MAZTER-seq.txt</a></span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:11;mso-yfti-lastrow:yes">
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US">Oxford-nanopore (m6Anet)</span></p>
+  </td>
+  <td style="border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;mso-border-top-alt:solid windowtext .5pt;
+  mso-border-left-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p class="MsoNormal"><span lang="EN-US"><a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/Oxford-nanopore%28m6Anet%29/0.fast5_basecall.txt" target="_blank">0.fast5_basecall.txt</a><br>
+  <a href="https://github.com/XichenZhao0223/m6AConquer-Data-Processing/blob/main/ProcessingScripts/Oxford-nanopore%28m6Anet%29/1.m6Anet.txt" target="_blank">1.m6Anet.txt</a></span></p>
+  </td>
+ </tr>
+</tbody></table>
 
-## 2. Index Building
-
-### Example: HISAT3N_A2G.txt
+## 2. Index Building Example: HISAT3N_A2G.txt
 
 This script is used to build the HISAT3N (A-to-G) index.
 
-#### Parameters
+### Parameters
 
 - `reference_dir`: Path to your reference directory.
 - `gft_file`: GTF file, e.g., `Homo_sapiens.GRCh38.110.gtf`.
@@ -46,7 +227,7 @@ This script is used to build the HISAT3N (A-to-G) index.
 - `hisat3n_tool_dir`: Path to the Hisat3n tool directory, e.g., `path/to/Hisat3n/hisat-3n`.
 - `genome_index_name`: Name for the genome index, e.g., `GRCh38_tran`.
 
-#### Codes
+### Codes
 
 ```bash
 #!/bin/bash
@@ -89,13 +270,11 @@ hisat-3n-build --base-change A,G --repeat-index --ss $reference_dir/genome.ss --
 echo "Finish genome index building......\n"
 ```
 
-## 3. Processing Scripts
-
-### Example: m6ACE-seq.txt
+## 3. Processing Script Example: m6ACE-seq.txt
 
 This script is used to process m6ACE-seq data.
 
-#### Parameters
+### Parameters
 
 - `ncore_fastp`: Number of cores for `fastp`.
 - `ncore_star`: Number of cores for `STAR`.
@@ -107,7 +286,7 @@ This script is used to process m6ACE-seq data.
 - `ref_dir`: Reference directory.
 - `gtf_file`: GTF file, e.g., `gencode.v45.annotation.gtf`.
 
-#### Codes
+### Codes
 
 ```bash
 !/bin/bash
