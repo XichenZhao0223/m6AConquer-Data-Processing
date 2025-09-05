@@ -22,6 +22,7 @@ genome_prefix=
 
 ## Parameter setting ends
 ############################
+# The Perl scripts used in this bash scripts are from m6A-REF-seq_v0.2 (https://github.com/Epigenomics-Lab/RNAMod/tree/main/m6A-REF-seq_v0.2).
 
 echo "Start counting motifs for m6A-REF-seq ......"
 echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
