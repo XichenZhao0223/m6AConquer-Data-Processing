@@ -33,7 +33,7 @@ change_refer_script=
 
 ## Parameter setting ends
 ############################
-
+# The python scripts used in this bash scripts are from GLORI-tools v1.0 (https://github.com/liucongcas/GLORI-tools).
 
 echo "Start building index for ${genome_prefix} ......"
 echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
