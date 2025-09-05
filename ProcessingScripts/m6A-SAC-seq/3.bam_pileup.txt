@@ -33,7 +33,7 @@ candidate_site=
 ## Parameter setting ends
 ############################
 
-echo "Start piling up for DART-seq sequencing data ......"
+echo "Start piling up for m6A-SAC-seq sequencing data ......"
 echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
 start=$(date +%s)
 
