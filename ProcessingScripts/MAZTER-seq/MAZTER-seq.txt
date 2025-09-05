@@ -39,6 +39,7 @@ fasta_file=
 
 ## Parameter setting ends
 ############################
+# The R scripts used in this bash scripts are from MAZTER-mine v1.0.1 (https://github.com/SchwartzLab/mazter_mine).
 
 echo "Start analysis for MAZTER-seq sequencing data ......"
 echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
