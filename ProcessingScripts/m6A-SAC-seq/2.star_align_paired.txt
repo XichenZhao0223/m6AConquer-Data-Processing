@@ -35,6 +35,7 @@ sample_fa_file=${cutout_dir}/${sample}.R1.clean.fa
 
 ## Parameter setting ends
 ############################
+# This script was adapted from m6A-SAC-seq proceesing scripts on Github (https://github.com/shunliubio/m6A-SAC-seq) (Release date:  Jan 15, 2022)
 
 echo "Start mapping for m6A-SAC-seq paired-end sequencing data ......"
 echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
