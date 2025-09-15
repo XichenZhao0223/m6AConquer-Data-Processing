@@ -33,7 +33,7 @@ ncores=
 
 ## Parameter setting ends
 ############################
-# The python scripts used in this bash scripts are from GLORI-tools v1.0 (https://github.com/liucongcas/GLORI-tools).
+# The python scripts used in this bash scripts are from GLORI-tools v1.0 (https://github.com/liucongcas/GLORI-tools) (Release date: Aug 22, 2022).
 
 echo "Start running GLORI with Combined&Reversed mode ......"
 echo Starting Time is `date "+%Y-%m-%d %H:%M:%S"`
